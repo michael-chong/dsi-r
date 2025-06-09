@@ -12,7 +12,7 @@ In this lesson, we will be learning about "tidy" data and tools to reshape and j
 3.  [Join operations]
 4.  [data.table]
 
-## Tidy data
+## Tidy data {#tidy-data}
 
 Rules for tidy data:
 
@@ -31,7 +31,7 @@ cat_data <- tibble(
 cat_data
 ```
 
-## Pivot operations
+## Pivot operations {#pivot-operations}
 
 **`pivot_longer()`**: used to transform data from a wide format to a long format. It "lengthens" data, increasing the number of rows and decreasing the number of columns
 
@@ -157,11 +157,12 @@ data.tables are faster and more memory efficient than data.frames, making them b
 They are keyed, which makes it possible to use binary search. A key is an index, created from column(s) in the data.table. It may or may not be unique.
 
 ```{r, echo = TRUE}
-data(iris)
+library(palmerpenguins)
+data(penguins)
 
-dt_iris <- as.data.table(iris)
+dt_penguins <- as.data.table(penguins)
 
-dt_iris
+dt_penguins
 ```
 
 You can see how many tables are stored and what size they are:
@@ -173,20 +174,20 @@ tables()
 To get information about our data, we can use `sapply` and `class`:
 
 ```{r, echo = TRUE}
-sapply(dt_iris, class)
+sapply(dt_penguins, class)
 ```
 
 To check if the data.table has a key:
 
 ```{r, echo = TRUE}
-haskey(dt_iris)
+haskey(dt_penguins)
 ```
 
 To set a key:
 
 ```{r, echo = TRUE}
-setkey(dt_iris, Species)
-haskey(dt_iris)
+setkey(dt_penguins, species)
+haskey(dt_penguins)
 ```
 
 ### General form
@@ -203,7 +204,7 @@ Where:
 ### Subsetting rows
 
 ```{r , echo = TRUE, eval=FALSE}
-dt_iris[Petal.Width > 0.5]
+dt_penguins[bill_length_mm > 50]
 ```
 
 ### Selecting columns
@@ -211,81 +212,81 @@ dt_iris[Petal.Width > 0.5]
 Selecting a column to return as a vector:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[, Species]
+dt_penguins[, species]
 ```
 
 Selecting a column to return as a data.table:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[, list(Species)]
+dt_penguins[, list(species)]
 ```
 
 ### Computations
 
-Counting the number of cases where Petal.Length plus Petal.Width is greater than 2:
+Counting the number of cases where the sum of bill length and bill depth is greater than 70mm:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[, sum((Petal.Length + Petal.Width) > 2)]
+dt_penguins[, sum((bill_length_mm + bill_depth_mm) > 70, na.rm = TRUE)]
 ```
 
 ### Combining subsetting and computation
 
-Counting the number of cases where Species is "setosa" and Petal.Length plus Petal.Width is greater than 2:
+Counting the number of cases where the species of penguin is "Adelie" and the sum of bill length and bill depth is greater than 70mm:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[Species == "setosa", sum((Petal.Length + Petal.Width) > 2)]
+dt_penguins[species == "Adelie", sum((bill_length_mm + bill_depth_mm) > 70, na.rm = TRUE)]
 ```
 
 ### Counting observations in current group
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[Species == "setosa", .N]
+dt_penguins[species == "Adelie", .N]
 ```
 
 ### Aggregations
 
-Counting the number in each Species group:
+Counting the number in each species:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[, .(.N), by = .(Species)]
+dt_penguins[, .(.N), by = .(species)]
 ```
 
-### Sorting
+### Computations by group
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[Petal.Width > 1, .(mean(Petal.Length)), keyby = .(Species)]
+dt_penguins[sex == "female", .(mean(body_mass_g, na.rm = TRUE)), keyby = .(species)]
 ```
 
 ### Ordering
 
-Ordering by Species and then by reverse Petal.Width:
+Ordering by species and then descending in body mass:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[order(Species, -Petal.Width)]
+dt_penguins[order(species, -body_mass_g)]
 ```
 
 ### Grouping by expression rather than column
 
-Grouping those that have Petal.Length greater/not than 4, and Petal.Width greater/not than 1:
+Grouping those that have body mass greater than 4000g and bill length less than 35mm:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[, .N, .(Petal.Length > 4, Petal.Width > 1)]
+dt_penguins[, .N, .(body_mass_g > 4000, bill_length_mm < 35)]
 ```
 
 ### Computations for multiple columns
 
-Taking the mean of all columns (except the grouping column, Species) using lapply and .SD:
+Taking the mean of all numeric columns using `lapply` and `.SD`:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[, lapply(.SD, mean), by = Species]
+dt_penguins[, lapply(.SD, mean, na.rm = TRUE), by = species, .SDcols = sapply(dt_penguins, is.numeric)]
 ```
 
 ### Subsetting for each group
 
-Getting the first two rows for all columns, for each Species:
+Getting the first two rows for all columns, for each species:
 
 ```{r, echo = TRUE, eval=FALSE}
-dt_iris[, head(.SD, 2), by = Species]
+dt_penguins[, head(.SD, 2), by = species]
 
 ```
 
