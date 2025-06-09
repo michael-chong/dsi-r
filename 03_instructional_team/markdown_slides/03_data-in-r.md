@@ -376,49 +376,71 @@ mytibble
 
 ---
 
-#### Coercing to tibble
+#### Coercing between data frames and tibbles
 
 ```r
-data("iris")
-head(iris)
+library(palmerpenguins)
+data(palmerpenguins)
+head(penguins)
 ```
 
 ```r
-iris_tibble <- as_tibble(iris)
-iris_tibble
+penguins_df <- as.data.frame(penguins)
+head(penguins_df)
 ```
 
+```r
+penguins_tibble_again <- as_tibble(penguins_df)
+head(penguins_tibble_again)
+```
 ---
 
-### Differences between data.frames and tibbles
+### Some differences between data.frames and tibbles
 
+- Tibbles are special cases of data.frames
 - Tibbles print more nicely and are easier to read in the console
-- Subsetting works differently
+- Subsetting works differently in some cases
+- Tibbles are "stricter" and so they're safer to use
+    - more predictable behaviour 
 
+For most purposes, data.frames and tibbles are interchangeable.
 ---
 
 #### Subsetting data.frames
 
 ```r
-iris$Species
+penguins$species
 ```
 
 ```r
-iris[["Species"]]
+penguins[["species"]]
 ```
+---
 
-#### Subsetting data.frames with the pipe
+#### Subtle differences between tibbles and data.frames
+
+data.frames allow for "partial" string matching for column names. Compare:
 
 ```r
-iris %>%
-  .$Species
+penguins$sp
 ```
 
 ```r
-iris %>%
-  .[["Species"]]
+penguins_df$sp
+```
+---
+
+#### Subtle differences between tibbles and data.frames
+
+Accessing columns with `[]` syntax returns different types of objects. Compare:
+
+```r
+penguins["species"]
 ```
 
+```r
+penguins_df["species"]
+```
 
 ---
 
