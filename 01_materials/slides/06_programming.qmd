@@ -3,17 +3,23 @@ title: "Programming in R"
 format: html
 ---
 
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+data(penguins)
+```
+
 In this lesson, we will be learning about fundamental programming tools in R, including how to define functions, loops, if-else statements, functional programming with the `purrr` package, and reproducible randomness and simulation.
 
 ## Contents
 
-1. [Functions](#functions)
-2. [Loops](#loops)
-3. [Conditional statements](#conditional-statements)
-4. [Functional programming](#functional-programming)
-5. [Randomness and simulation](#randomness-and-simulation)
+1.  [Functions](#functions)
+2.  [Loops](#loops)
+3.  [Conditional statements](#conditional-statements)
+4.  [Functional programming](#functional-programming)
+5.  [Randomness and simulation](#randomness-and-simulation)
 
-## Functions
+## Functions {#functions}
 
 You can write your own functions in R, and you should consider doing so when you have copy-pasted a chunk of code twice.
 
@@ -29,7 +35,7 @@ function_name <- function(inputs) {
 
 When naming, try not to use names that already have meaning in R.
 
-## Loops
+## Loops {#loops}
 
 Loops are another tool for reducing the need to duplicate code, this time by repeatedly performing a task.
 
@@ -57,17 +63,6 @@ A simple example:
 for (i in 1:10){
   print(i*5)
 }
-```
-
-For loops to modify an existing object
-
-To create new column that adds the Sepal.Length in each row with the Sepal.Length from the previous row:
-
-```{r, echo = TRUE}
-for (i in 2:nrow(iris)) {
-  iris$previous_combo[i] <- iris$Sepal.Length[i] + iris$Sepal.Length[i-1]
-}
-iris
 ```
 
 Different ways to loop:
@@ -112,11 +107,11 @@ while(i <= 10){
 }
 ```
 
-## Conditional statements
+## Conditional statements {#conditional-statements}
 
 Basic structure
 
-``` {r,echo = T, eval=F}
+```{r,echo = T, eval=F}
 if(condition1) {
   <code to execute if condition1 is TRUE>
 } else if (condition2) {
@@ -132,7 +127,7 @@ Conditions must either evaluate to TRUE or FALSE.
 
 You can combine multiple conditions using the 'or' operator:
 
-`(condition1) || (condition2)` 
+`(condition1) || (condition2)`
 
 You can combine multiple conditions using the 'and' operator:
 
@@ -176,14 +171,13 @@ grades %>%
 
 Note that each condition is checked in order: if `condition1` is TRUE, `output1` will be chosen and `condition2` will not be checked.
 
-## Functional programming
+## Functional programming {#functional-programming}
 
 Iteration is made more straightforward with the `purrr` library.
 
 ```{r}
 library(purrr)
 ```
-
 
 Each type of output has a different function:
 
@@ -227,7 +221,7 @@ map2(x, y, ~ .x + .y)
 
 ## Questions?
 
-## Randomness and simulation
+## Randomness and simulation {#randomness-and-simulation}
 
 We can generate random data in R.
 
@@ -257,7 +251,7 @@ runif(5)
 
 The uniform distribution
 
-``` {r, echo = TRUE, eval=F}
+```{r, echo = TRUE, eval=F}
 runif(number, min, max)
 ```
 
