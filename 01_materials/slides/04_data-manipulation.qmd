@@ -196,3 +196,134 @@ ads_data |>
 ```
 
 ## 5. Application: data cleaning
+
+We will apply some of these skills to prepare a dataset for analysis. The file `05_src/slides_data/toronto_city_council_attendance_2018-2022.csv` contains data on whether members of Toronto City Council were present at meetings that they were expected to attend. See [the Toronto Open Data webpage](https://open.toronto.ca/dataset/members-of-toronto-city-council-meeting-attendance/) for details.
+
+### Data cleaning
+
+```{r}
+council_attendance_raw <- read_csv("../../05_src/slides_data/toronto_city_council_attendance_2018-2022.csv")
+
+head(council_attendance)
+```
+
+Let's only keep columns that contain relevant information. We can remove the `_id` column (which is not useful to us) and `Term` (which in this case is only 2018-2022).
+
+```{r}
+council_attendance <- council_attendance_raw |>
+  select(-`_id`, -Term)
+```
+
+Currently the first and last names are in separate columns. We can join them together so we only have one name field:
+
+```{r}
+council_attendance <- council_attendance |>
+  mutate(Name = str_c(FirstName, " ", LastName)) |>
+  select(-FirstName, -LastName)
+```
+
+Most of the meeting times are in `00:00AM - 00:00PM` format in the `SessionStart_EndTime` column. We can change the meeting start and end times so that they have their own columns. We can use the `separate_wider_delim()` function to do this, but some of the entries aren't in this format, so we need to add the `too_few` argument.
+
+```{r}
+# See which times aren't in the right format
+council_attendance |>
+  filter(!str_detect(SessionStart_EndTime, " - "))
+
+council_attendance <- council_attendance |>
+  separate_wider_delim(SessionStart_EndTime, delim = " - ", names = c("StartTime", "EndTime"), too_few = "align_start")
+
+head(council_attendance)
+```
+
+The meeting times are already in 24H format, meaning the `AM` and `PM` suffixes are redundant. We can remove them:
+
+```{r}
+council_attendance <- council_attendance |> 
+  mutate(StartTime = str_remove(StartTime, "AM|PM")) |> # using the `|` operator matches both AM and PM
+  mutate(EndTime = str_remove(EndTime, "AM|PM"))
+
+head(council_attendance)
+```
+
+In order to perform date-time operations, we need to combine the `SessionDate` , `StartTime`, and `EndTime` columns. We can do this with tools from the `lubridate` package:
+
+```{r}
+council_attendance <- council_attendance |>
+  mutate(StartDateTime = str_c(SessionDate, " ", StartTime)) |>  # concatenate date and time
+  mutate(EndDateTime = str_c(SessionDate, " ", EndTime)) |>
+  mutate(
+    StartDateTime = ymd_hm(StartDateTime), # convert to date-time object
+    EndDateTime = ymd_hm(EndDateTime)
+  ) |>
+  select(-StartTime, -EndTime)
+
+head(council_attendance)
+```
+
+The column `SessionType` contains information on whether the meeting was in the Morning, Afternoon, or Evening. If we were to sort these with the `arrange` function, they would be sorted alphabetically (Afternoon \> Evening \> Morning), but the more logical order is Morning \> Afternoon \> Evening. We can do this by coding this variable into a factor:
+
+```{r}
+# See what happens when we sort
+council_attendance |> 
+  arrange(SessionType) |>
+  head()
+
+council_attendance |>
+  arrange(SessionType) |>
+  tail()
+
+# Code into a factor
+council_attendance <- council_attendance |>
+  mutate(SessionType = factor(
+    SessionType, 
+    levels = c("Morning", "Afternoon", "Evening")
+    )
+  )
+
+# Now morning sessions should be first
+council_attendance |> 
+  arrange(SessionType) |>
+  head()
+
+# ...and evening sessions should be lat
+council_attendance |>
+  arrange(SessionType) |>
+  head()
+```
+
+### Answering questions from the data
+
+How many city council meetings were there in total? Since there are multiple entries for each meeting (one for each councillor), this isn't as simple as counting the number of rows. We can assume that there is only one city council meeting at a given time, and find how many unique entries there are with `distinct()` .
+
+```{r}
+council_attendance |>
+  filter(Committee == "City Council") |> # look only at city council meetings
+  distinct(StartDateTime)
+```
+
+How many city council meetings did each councillor attend? We need to first look only at City Council meetings (`filter`), consider each councillor individually (`group_by`) and then count the number of meetings (`summarise`):
+
+```{r}
+council_attendance |>
+  filter(Committee == "City Council") |> # look only at city council meetings
+  group_by(Name) |>
+  summarise(attended = sum(Present == "Y"))
+```
+
+What was the longest meeting? We can find the difference between the start and end times by subtracting them:
+
+```{r}
+council_attendance |>
+  mutate(SessionDuration = EndDateTime - StartDateTime) |> 
+  select(Committee, SessionDate, SessionDuration) |> 
+  distinct() |> 
+  arrange(desc(SessionDuration))
+```
+
+## Exercises
+
+1.  Look only at City Council meetings that lasted 30 minutes or longer. Who attended the most of these meetings?
+2.  Which city councillor has the lowest proportion of meetings attended?
+3.  What proportion of Mark Grimes's morning meetings did he attend?
+4.  There are 4 "community council" committees. For each of them separately, find the average duration of their meetings.
+5.  How many different committees are in the dataset?
