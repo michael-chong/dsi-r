@@ -16,7 +16,24 @@ $ echo "Data Sciences Institute"
 
 ---
 
-## `Getting set up`
+### Resources for this lesson
+
+R basics
+
+* [Chapter 2 of Hands-On Programming with R](https://rstudio-education.github.io/hopr/basics.html)
+* [Blog post on Project-oriented workflow by Jenny Bryan](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/)
+
+Quarto
+
+* [Using R, quarto.org](https://quarto.org/docs/computations/r.html)
+
+R packages and help pages
+
+* [Chapter 3 of Hands-On Programming with R](https://rstudio-education.github.io/hopr/packages.html)
+
+---
+
+## Getting set up
 
 ---
 ### R
@@ -75,14 +92,14 @@ What is RStudio?
 
 ---
 
-Your saved R files, where you can write and edit code, are in the upper left. If you do not have a file open, this section will be collapsed.
+The editor, where you can write and edit files, are in the upper left. If you do not have a file open, this section will be collapsed.
 
 
-![h:500](./pics/01_RStudio-Scripts.png)
+![h:500](./pics/01_RStudio-Editor.png)
 
 ---
 
-The console, where you run code and view output, is on the lower left.
+The console, where you test code and view output, is on the lower left.
 
 ![h:500](./pics/01_RStudio-Console.png)
 
@@ -107,94 +124,68 @@ The lower right section contains:
 
 ---
 
-### Interacting with R
+### Interacting with R in the console
 
-* Console:
-    * Type commands directly into the console and press ‘Enter’ to execute.
-    
-* Script:
-    * Put cursor at the end of the line to execute OR highlight the section.
-    * Press ‘Ctrl’ + ‘Enter’ on Windows, Mac OR ‘Cmd’ + ‘Return’ on Mac.
-    
-* Clear console with ‘Ctrl’ + ‘L’.
+The console is used to run and test code -- use this for code that you don't need to save.
 
-* If R is still waiting for you to enter more text, the console will show a + prompt.
+* Type commands directly into the console and press ‘Enter’ to execute.
+* Clear console with ‘Ctrl’ + ‘L’
+* If R is still waiting for you to enter more text (e.g. because of an accidental open parenthesis or quote), the console will show a `+` prompt instead of `>`.
+    * If stuck, use 'ESC' to quit the current input
 
 ---
 
-### R Project
+### Demo: Console
+
+1. Try adding two numbers together
+2. Try assigning a variable by typing:
+
+`x <- 123`
+
+---
+
+### Directories and R Projects
 
 * Good to keep data, analyses, and text in a single folder. 
+* "R Projects" make some aspects of organizing a project more convenient
+  * 'File' → 'New project' → 'New directory' -> 'New project' -> name directory (e.g. "DSI_R") -> 'Create'
 
-* RStudio interface for this is Projects.
-    * File → New project; choose New directory → New project
+What this does:
 
-* Enter a name for this new folder (“directory”) and choose a convenient location for it. This will be your working directory.
-    * On Desktop, save as ‘DSI IntroR’
+1. Creates a new directory
+2. Creates a '.RProj' file (defines the top-level directory of the project)
+3. Starts a new session and sets the "working directory"
 
-* Click on ‘Create’ project.
+---
 
-* Create a new file where we will type our scripts.
-    * Go to File → New File → R script. Click the save icon on your toolbar and save your script as “script.R”.
+### Using the editor
+
+* The most basic R file is a script, which contains code to be executed in sequence
+* Create a new script with 'File' -> 'New File' -> 'R Script', or Ctrl/Cmd + Shift + N
+* Run current line with Cmd/Ctrl + Enter
+* Run entire script with Cmd/Ctrl + Shift + Enter
+* Save with 'File' -> 'Save' or Ctrl + S
+
+---
+
+### Diagnostics
+
+When working in a script, RStudio will mark syntax errors. If you hover over the red x, you can see what the problem is.
+
+![h:250](./pics/01_syntax_error.png)
+
+----
+
+### Demo: Projects and Editor
+
+1. Create a new R Project
+2. Create a new R script within the R Project
+3. Assign some number to the variable `x` (again with `x <- ` syntax)
+4. Multiply the number by itself using `*`
 
 ---
 
 ## R basics
-
----
-
-### Location
-
-* Current location:
-```r
-getwd() # current location of the file, if saved
-``` 
-
-* Set working directory: By typing the path
-```r
-setwd("/Users/<Name>/Desktop")
-``` 
-
-* Or (recommended method):
-    * Session → Set Working Directory → Choose Directory...
-
----
-### R Coding Style
-
-* Limit yourself to 80 characters per line.
-
-* Use comments. Don’t describe what the code does, but explain why you wrote it that way.
-
-* Use only `<-` for assignment, not `=`.
-
-* Never reassign reserved words.
-
-* You may read more:
-    * https://google.github.io/styleguide/Rguide.html
-    * http://steipe.biochemistry.utoronto.ca/abc/index.php/RPR-Coding_style
-
----
-### R Features
-* In R, the indexing begins from 1.
-
-* R is case sensitive (“`X`” is not the same as “`x`”).
-
-* R uses dynamic variable typing, so variables can be used over and over again.
-
----
-### Mathematical operators
-
-For now we will work in the console.
-
-To run code, hit enter.
-
-If it runs successfully, you will see a `>` on the line with the cursor.
-
-If it instead shows a `+`, the command was incomplete. You can finish the command and hit enter, or hit ESCAPE to start again.
-
-```r
-(27 + 0.4 - 2 * 7 / 11) ^ 3
-``` 
 
 ---
 
@@ -218,235 +209,271 @@ Running the name of the object will display the object.
 ```r
 num_participants
 ```
-
 ---
 
 ### Functions
 
-Built-in functions perform many operations. They take the form:
+Functions perform tasks that are too complicated or repetitive to write out repeatedly. They take the form:
 `function_name(argument1 = value1, argument2 = value2, ...)`
 
+R comes with some built-in functions. For example:
+
 ```r
+paste("abc", "def")
 sqrt(16)
 seq(1, 14)
 ```
-
----
-### R Help
-
-* Online documentation for functions and variables in R exists.
-
-* Obtained by typing `help(FunctionName)` or `?FunctionName` at the R prompt, where `FunctionName` is the name of the function.
-
-```r
-help(sqrt)
-
-?sqrt
-``` 
-
 ---
 
-### R Packages
+### Custom functions
 
-* Packages are collections of R functions, data, and compiled code.
-
-* Libraries are directories in R where the packages are stored.
-
-* Built-in functions are part of R standard or base packages and do not need to be downloaded.
+You can define your own functions with the following syntax:
 
 ```r
-library(help = "base")
-library(help = "stats")
+my_function <- function(argument1, argument2, ...) {
+  # <code to execute the function>
+  return(output)
+}
+```
+* not all functions have inputs or "arguments"
+* the `return()` line defines what the final result of the function should be
+
+---
+
+### Comments in code
+
+Use `#` to explain your code where you think it might be useful. For example:
+
+```r
+x <- 9 # I chose 9 because it's my favourite number
+
+# This function below divides a number by 10
+divide_by_9 <- function(some_number) {
+  some_number_divided <- some_number / 9
+  return(some_number_divided)
+}
+
+# Test my function:
+divide_by_9(72)
 ```
 
-* Some functions are not built-in. To get these, need to download packages
-
-* R packages extend R's functionality.
-
 ---
-### R Packages
 
-* Popular repositories for Packages:
-    * The Comprehensive R Archive Network (CRAN)
-      * Link: https://cran.r-project.org/web/packages/ 
-    
-    * Bioconductor
-      * Link: https://www.bioconductor.org/packages/release/bioc/ 
-    
-    * GitHub
-      * Link: https://github.com/search?q=r+packages&type=registrypackages
-    
-    
-* Depending on the source of Package, downloading instructions may differ.
+### Demo: Functions
+
+1. Write a function `add_10` that takes a number and adds 10 to it. 
+2. Write a function that takes two words and uses `paste` to form the sentence "I like ___ and ___."
 
 ---
 
+### Summary so far
+
+At this point, we've learned:
+
+* how to navigate the RStudio interface
+* when to use console and editor
+* how to create objects and functions
+* how to write comments in code
+
+**Questions?**
+
+---
+
+## Quarto and coding style
+
+---
+
+### Quarto
+
+Quarto files are a way to work with code and text in the same document. 
+
+* Create a new Quarto file by going to 'File' -> 'New file' -> 'Quarto document'
+
+For now, create using the defaults -- this can all be changed later.
+
+![h:400](./pics/01_quarto_new.png)
+---
+
+### Parts of a Quarto document
+
+The header ("YAML header") contains metadata -- information about the document itself, like its `title`. You can have other options, like the `author` or `date`. 
+
+![h:500](./pics/01_quarto_header.png)
+
+^[More on this later, or here: [\[about YAML\]](https://rpubs.com/drgregmartin/1266674) [PDF YAML options](https://quarto.org/docs/reference/formats/pdf.html)]
+
+---
+
+### Parts of a Quarto document
+
+Code chunks are denoted with three ticks (```) at the beginning and the end of the code. 
+
+Like with a script, you can use the Run button or Cmd/Ctrl + Enter or the little green arrow. Output will show in-line.
+
+![h:450](./pics/01_quarto_code.png)
+
+---
+
+### Parts of a Quarto document
+
+You can write (human) text anywhere below the header and outside the code chunks.
+
+![h:500](./pics/01_quarto_text.png)
+
+---
+
+### Why use Quarto?
+
+* Useful like a notebook (like we will do in this module) 
+* Easily embed output and convert to other formats (e.g. pdf) for sharing
+  
+---
+
+### Demo: Quarto
+
+1. Create a new Quarto document
+2. In a new code chunk, define a function that takes a number and raises it to the power of itself, and test that it works
+3. Make sure the `format` in the header is `html`
+4. In RStudio, 'Render' the document
+5. Open a browser to see the finished product
+
+
+---
+
+## Packages and Help
+
+---
+
 ### R Packages
 
-* R packages extend R's functionality.
+* We've seen that R comes with some built-in functions (like `sqrt()`)
+* R *packages* are collections of functions, data, and compiled code that extend R's functionality
+* *Libraries* refer to where the packages are stored.
 
-* tidyverse is a package from CRAN. 
+Many useful packages need to be downloaded and installed with `install.packages()`. We then need to load the package with `library()`. 
 
-* Link: https://cran.r-project.org/web/packages/tidyverse/index.html
-    * What is the current version?
-    * Who is the author?
-    * How to report an issue?
-    * How can a user access Reference Manual?
+---
 
-* To download tidyverse:
+### R Packages
+
+For example, the `palmerpenguins` package contains a dataset that we will be using in this module:
+
+```r
+# Install package (only need to do this once on your computer)
+install.packages("palmerpenguins")
+
+# Load package (do this every time you restart R)
+library(palmerpenguins)
+
+# Now we're able to access a dataset from this package
+data(penguins)
+penguins
+```
+---
+
+### R packages
+
+Where do packages come from?
+
+* [CRAN](https://cran.r-project.org/web/packages/) is the most popular and default place for developers to publish their packages
+* when using `install.packages()`, the default is to look for the package in CRAN
+
+Packages can also be installed from other sources, but instructions will vary
+
+* [Bioconductor](https://www.bioconductor.org/packages/release/bioc/)
+* GitHub repositories 
+
+---
+
+### `tidyverse`
+
+The [tidyverse](https://www.tidyverse.org/) is a collection of related R packages that provide data science tools.
+
+We will be using tools from the tidyverse throughout this module. Install the entire collection with:
 
 ```r
 install.packages("tidyverse")
 ```
----
-
-### R Packages
-
-* Every time you download a package or start a new RStudio session, you will need to load the packages you want to use.
-
-```r
-library(tidyverse)
-```
-
----
-
-### tidyverse
 
 ![h:350](./pics/01_TidyversePackages.png)
 
-* More details on ‘tidyverse’ package (only after downloading):
+---
 
-```r
-ls("package:tidyverse") # list all functions in package
-?tidyverse # get information on package
+### `tidyverse`
+
+Why is the tidyverse worth mentioning in particular?
+
+* entire ecosystem of powerful packages
+* very popular
+* **different syntax from "base" R**
+
+---
+
+### Looking up help
+
+If a function or dataset is built-in or comes from a package, there is usually a help page that describes it, which you can access with `?` or `help()`
+
+```
+?round 
+help("paste")
+?palmerpenguins
+help(package = "tidyverse")
 ```
 
----
-
-## Exercises
+Many popular packages also come with online help pages or manuals. 
 
 ---
+### Demo: installing and using an unfamiliar package
 
-### Basic Operations
-
-1. Install and load the `faraway` library.
-2. Create an object named `my_sequence` that is a sequence from 1 to 7.
-3. Use an R function to take the square roots of all the numbers in the sequence. Save this new sequence as an object named `sqrt_sequence`.
-4. Multiply `sqrt_sequence` by 3.
+1. Install the [`climate` package](https://cran.r-project.org/package=climate).
+2. Find the closest weather station to Toronto Pearson airport (lat: `43.67`, lon: `-79.63`).
+3. Find the weather information from yesterday from that station.
 
 ---
 
-## File types
+### Summary
+
+Since the last check-in, we've learned:
+
+* what components make up a Quarto document
+* why Quarto documents are useful
+* how to install and load packages
+* what the tidyverse is
+* how to look for documentation on packages and functions
+
+**Questions?**
 
 ---
 
-### R Scripts
+### Exercises
 
-![h:500](./pics/01_script.png)
+1. Using the built-in functions `seq()` and `median()`, write a function called `find_middle()` that:
 
----
+* takes two numbers as inputs, then
+* produces a sequence that counts between them in increments of 1, then
+* finds the middle of the sequence
 
-### R Scripts
+2. Install the `faraway` package from CRAN. Then, in a new Quarto document, 
 
-R Scripts are files where you can save and edit your code. 
-
-### Running code
-
-Run the entire script by pressing Run
-
-![h:250](./pics/01_Run.png)
-
-Run the command where your cursor is located by pressing Cmd/Ctrl + Enter
-
-Run a section of commands by highlighting them and pressing Cmd/Ctrl + Enter
+* load this package and load the `broccoli` dataset from this package. 
+* Use the `head()` function to print the first 6 rows of the data
+* Change the `format` to `pdf` and render the document
 
 ---
 
-### Diagnostics
+### Exercise 1 Hint
 
-When working in a script, RStudio will mark syntax errors. If you hover over the red x, you can see what the problem is.
+Fill in the blanks:
 
-![h:250](./pics/01_syntax_error.png)
+```r
+find_middle <- function(number1, number2) {
 
----
+  sequence <- seq(____, ____)
+  middle <- median(____)
+  
+  ____(middle)
+  
+}
+```
 
-### R Markdown
 
-![h:500](./pics/01_markdown.png)
-
----
-
-### R Markdown
-
-R Markdown files combine code chunks with the results of those chunks and text.
-They support output formats like PDFs, html, Word files, and slideshows.
-
----
-
-### Components
-
-In the YAML header, the document information and settings are specified.
-
-![h:450](./pics/01_markdown_YAML.png)
-
----
-
-### Components
-
-Text goes in between the code chunks. This text can be formatted with basic markdown syntax.
-
-![h:450](./pics/01_markdown_text.png)
-
----
-
-### Components
-
-You can write in code chunks the same way you would write in a script.
-
-![h:450](./pics/01_markdown_code_chunks.png)
-
----
-
-### Running code
-
-Like with a script, you can use the Run button Cmd/Ctrl + Enter.
-
-Each chunk also has an arrow you can press to run the code in that chunk.
-
-The output will display below the code chunk rather than in the console or the Plots section.
-
----
-
-### Knitting .Rmd files
-
-To present your work, you can knit your R Markdown file to a more common file type, including PDFs, Word documents, and html files.
-
-![auto center](./pics/01_knit.png)
-
----
-
-## Exercises
-
----
-
-### R scripts
-
-1. Create a new R script.
-2. Save the script.
-3. Write code to calculate the average of ten numbers.
-4. Run the script.
-
----
-
-### R Markdown
-
-1. Create a new R Markdown file.
-2. Save the file.
-3. Load the `tidyverse` and `faraway` libraries.
-4. Load the dataset `broccoli` by calling the function `data()`
-5. Print out the `broccoli` dataset in the R Markdown file.
-6. Knit the R Markdown file to PDF.
-
----
-
-# Any questions?
