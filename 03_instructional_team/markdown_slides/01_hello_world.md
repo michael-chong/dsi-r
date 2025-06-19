@@ -158,6 +158,24 @@ What this does:
 
 ---
 
+### Not ideal file structure
+
+![h:500](./pics/01_bad_file_struc.png)
+
+---
+
+### Desired file structure
+
+![h:500](./pics/01_file_struc.png)
+
+---
+
+### Desired file structure
+
+![h:500](./pics/01_file_struc_annotated.png)
+
+---
+
 ### Using the editor
 
 * The most basic R file is a script, which contains code to be executed in sequence
